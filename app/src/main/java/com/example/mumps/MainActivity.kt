@@ -39,12 +39,6 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 
 
-//data class CheckIn(
-//    val mood: Int,
-//    val note: String,
-//    val createdAt: Long = System.currentTimeMillis()
-//)
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +49,8 @@ class MainActivity : ComponentActivity() {
 
             val context = LocalContext.current
 
-            var selectedMood by remember { mutableIntStateOf(3) } // default
+            var selectedMood by remember { mutableIntStateOf(3) }
             var note by remember { mutableStateOf("") }
-//            val recent = remember { mutableStateListOf<CheckIn>() }
             val recent = remember { mutableStateListOf<CheckIn>() }
             LaunchedEffect(Unit) {
                 val items = repo.fetchRecent(5)
@@ -113,36 +106,17 @@ class MainActivity : ComponentActivity() {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-//                Button(
-//                    onClick = {
-//                        val trimmed = note.trim()
-//                        val checkIn = CheckIn(mood = selectedMood, note = trimmed)
-//                        recent.add(0, checkIn) // newest first
-//
-//                        // keep only last 5 for now
-//                        while (recent.size > 5) recent.removeAt(recent.size - 1)
-//
-//                        note = ""
-//                        Toast.makeText(context, "Saved locally ✅", Toast.LENGTH_SHORT).show()
-//                    },
-//                    modifier = Modifier.align(Alignment.End)
-//                ) {
-//                    Text("Save")
-//                }
                 Button(
                     onClick = {
                         val trimmed = note.trim()
 
                         scope.launch {
-                            // 1) write to Firestore
                             repo.addCheckIn(mood = selectedMood, note = trimmed)
 
-                            // 2) re-fetch latest 5 so UI matches server
                             val items: Collection<CheckIn> = repo.fetchRecent(5)
                             recent.clear()
                             recent.addAll(items)
 
-                            // 3) reset UI
                             note = ""
                             Toast.makeText(context, "Saved to Firestore ✅", Toast.LENGTH_SHORT).show()
                         }

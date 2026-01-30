@@ -16,8 +16,6 @@ class FirestoreRepo(
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 ) {
     private val checkins = db.collection("checkins")
-
-    // Write one check-in
     suspend fun addCheckIn(mood: Int, note: String) {
         val data = mapOf(
             "mood" to mood,
@@ -26,8 +24,6 @@ class FirestoreRepo(
         )
         checkins.add(data).await()
     }
-
-    // Read latest N check-ins
     suspend fun fetchRecent(limit: Long = 5): List<CheckIn> {
         val snap = checkins
             .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
